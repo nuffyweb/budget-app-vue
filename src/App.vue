@@ -1,28 +1,84 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <el-container>
+    <el-header>AppBudget</el-header>
+    <el-main>
+      <el-row justify="center" >
+        <el-col :span="12" :offset="6">
+          <AppTotalBalance :total="totalBalance"/>
+        </el-col>
+      </el-row>
+      <el-row justify="center">
+        <el-col :span="12" :offset="6">
+          <AppBudgetList :list="list" @deleteItem="onDeleteItem"/>
+        </el-col>
+      </el-row>
+      <el-row justify="center">
+        <el-col :span="12" :offset="6">
+          <AppFormAdd @addNewFormData="addNewBalance"/>
+        </el-col>
+      </el-row>
+
+
+
+    </el-main>
+  </el-container>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import AppBudgetList from "@/components/AppBudgetList";
+import AppTotalBalance from "@/components/AppTotalBalance";
+import AppFormAdd from "@/components/AppFormAdd";
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+    AppBudgetList,
+    AppTotalBalance,
+    AppFormAdd,
+  },
+  data() {
+    return {
+      list: {
+        1: {
+          type: 'INCOME',
+          value: 100,
+          comment: 'comment',
+          id: 1,
+          data: '21.02.2021'
+        },
+        2: {
+          type: 'EXPENSE',
+          value: -50,
+          comment: 'comment',
+          id: 2,
+          data: '24.02.2021'
+        }
+      },
+    };
+  },
+  computed: {
+    totalBalance() {
+      return Object.values(this.list).reduce((acc, item) => acc + item.value, 0)
+    }
+  },
+  methods: {
+    onDeleteItem(id) {
+      this.$delete(this.list, id)
+    },
+    addNewBalance(data) {
+      const  newObj = {
+        ...data,
+        id: String(Math.random())
+      };
+      this.$set(this.list, newObj.id, newObj)
+    }
+  },
 }
 </script>
-
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+body {
+  font-family: Arial;
+}
+.is-justify-center {
+  justify-content: center;
 }
 </style>
